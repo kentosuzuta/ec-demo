@@ -6,5 +6,6 @@ export type Product = {
   summary: string;
   priceYen: number;
   imageUrl: string;
+  category?: string;
   inStock: boolean;
 };

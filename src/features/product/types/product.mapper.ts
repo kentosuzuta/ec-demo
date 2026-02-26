@@ -9,5 +9,6 @@ export const toProduct = (dto: ProductDto): Product => ({
   summary: dto.description,
   priceYen: dto.price,
   imageUrl: dto.imageUrl,
+  category: dto.category,
   inStock: dto.stock > 0,
 });
