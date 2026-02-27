@@ -1,5 +1,6 @@
 "use client";
 
+import { useFavorite } from "@/features/layout/providers/FavoriteProvider";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -16,6 +17,8 @@ import {
 import Link from "next/link";
 
 export function Header() {
+  const { count } = useFavorite();
+
   return (
     <AppBar position="sticky" elevation={1} color="primary">
       <Toolbar disableGutters>
@@ -79,7 +82,9 @@ export function Header() {
             aria-label="favorites"
             color="inherit"
           >
-            <FavoriteBorderIcon />
+            <Badge badgeContent={count} color="error">
+              <FavoriteBorderIcon />
+            </Badge>
           </IconButton>
 
           <IconButton
