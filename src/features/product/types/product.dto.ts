@@ -1,15 +1,13 @@
-// APIレスポンス
-
 export type ProductDto = {
   id: string;
   name: string;
   description: string;
   price: number;
-  imageUrl: string;
+  image_url: string;
   stock: number;
   category?: string;
-  createdAt: string;
-  updateAt: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type ProductListDto = {

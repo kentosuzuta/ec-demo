@@ -1,5 +1,3 @@
-// UI用
-
 export type Product = {
   id: string;
   title: string;
