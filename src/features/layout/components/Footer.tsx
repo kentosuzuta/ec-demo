@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <Box component="footer" sx={{ mt: 6 }}>
+    <Box component="footer">
       <Divider />
       <Container sx={{ py: 3 }}>
         <Box

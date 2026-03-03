@@ -19,12 +19,16 @@ export default function RootLayout({
     <html lang="ja">
       <body
         suppressHydrationWarning
-        style={{ minHeight: "100dvh", display: "flex", flexDirection: "column" }}
+        style={{
+          minHeight: "100dvh",
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
         <MuiProvider>
           <FavoriteProvider>
             <Header />
-            <Box component="main" sx={{ py: 4, flexGrow: 1 }}>
+            <Box component="main" sx={{ flexGrow: 1 }}>
               {children}
             </Box>
             <Footer />
