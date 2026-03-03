@@ -1,11 +1,11 @@
-import ProductImageGallery from "@/features/product/components/ProductImageGallery";
+import BackToProductsButton from "@/features/common/components/BackToProductsButton";
 import ProductDetailInfoPanel from "@/features/product/components/ProductDetailInfoPanel";
+import ProductImageGallery from "@/features/product/components/ProductImageGallery";
 import ProductVariantSelector from "@/features/product/components/ProductVariantSelector";
 import type { Product } from "@/features/product/types/product";
 import { Box, Container } from "@mui/material";
 import ProductDeliveryInfo from "./ProductDeliveryInfo";
 import ProductDetailActionButtons from "./ProductDetailActionButtons";
-import PtoductDetailReturnButton from "./ProductDetailReturnButton";
 
 export default function ProductDetailView({
   product,
@@ -21,7 +21,7 @@ export default function ProductDetailView({
   return (
     <Container sx={{ py: 4 }}>
       <Box sx={{ mb: 3 }}>
-        <PtoductDetailReturnButton />
+        <BackToProductsButton />
       </Box>
 
       <Box
@@ -59,7 +59,7 @@ export default function ProductDetailView({
             <ProductDeliveryInfo />
           </Box>
 
-          <ProductDetailActionButtons />
+          <ProductDetailActionButtons productId={product.id} />
         </Box>
       </Box>
     </Container>

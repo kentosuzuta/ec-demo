@@ -17,7 +17,7 @@ import {
 import Link from "next/link";
 
 export default function ProductCard({ product }: { product: Product }) {
-  const { addFavorite, removeFavorite, hasFavorite } = useFavorite();
+  const { addFavorite, hasFavorite } = useFavorite();
   const isFavorite = hasFavorite(product.id);
 
   return (
@@ -83,10 +83,16 @@ export default function ProductCard({ product }: { product: Product }) {
           variant="outlined"
           disabled={!product.inStock}
           startIcon={<FavoriteBorderIcon />}
-          sx={{ flex: 1, minWidth: 0, whiteSpace: "nowrap" }}
-          onClick={() =>
-            isFavorite ? removeFavorite(product.id) : addFavorite(product.id)
-          }
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            whiteSpace: "nowrap",
+            color: isFavorite ? "error.main" : "primary",
+            borderColor: isFavorite ? "error.main" : undefined,
+          }}
+          onClick={() => {
+            if (!isFavorite) addFavorite(product.id);
+          }}
         >
           {isFavorite ? "お気に入り済み" : "お気に入り"}
         </Button>
