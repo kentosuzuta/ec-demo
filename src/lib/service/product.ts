@@ -6,14 +6,37 @@ import type { ProductDetailImageCommonDto } from "@/features/product/types/produ
 import { ProductOptionDto } from "@/features/product/types/product_option.dto";
 import { getSupabaseClient } from "@/lib/supabase/client";
 
-export async function fetchProducts(): Promise<Product[]> {
+type FetchProductsInput = {
+  query?: string;
+};
+
+const sanitizeSearchQuery = (query: string): string => {
+  return query.replace(/[(),]/g, " ").trim();
+};
+
+export async function fetchProducts(
+  input: FetchProductsInput = {},
+): Promise<Product[]> {
+  const { query } = input;
   const supabase = getSupabaseClient();
-  const { data, error } = await supabase
+  let builder = supabase
     .from("products")
     .select(
       "id,name,description,price,image_url,stock,category,created_at,updated_at",
     )
     .order("created_at", { ascending: false });
+
+  const normalizedQuery = query?.trim();
+  if (normalizedQuery) {
+    const safeQuery = sanitizeSearchQuery(normalizedQuery);
+    if (safeQuery) {
+      builder = builder.or(
+        `name.ilike.%${safeQuery}%,category.ilike.%${safeQuery}%`,
+      );
+    }
+  }
+
+  const { data, error } = await builder;
 
   if (error || !data) {
     throw new Error(error?.message ?? "Failed to fetch products");
