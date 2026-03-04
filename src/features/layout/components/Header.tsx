@@ -1,6 +1,7 @@
 "use client";
 
 import { useHeaderHandler } from "@/features/layout/hooks/useHeaderHandler";
+import { useCart } from "@/features/layout/providers/CartProvider";
 import { useFavorite } from "@/features/layout/providers/FavoriteProvider";
 import CloseIcon from "@mui/icons-material/Close";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -20,6 +21,7 @@ import Link from "next/link";
 
 export function Header() {
   const { count } = useFavorite();
+  const { count: cartCount } = useCart();
   const {
     initialQuery,
     keyword,
@@ -130,7 +132,7 @@ export function Header() {
             aria-label="cart"
             color="inherit"
           >
-            <Badge badgeContent={0} color="error">
+            <Badge badgeContent={cartCount} color="error">
               <ShoppingCartIcon />
             </Badge>
           </IconButton>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useCart } from "@/features/layout/providers/CartProvider";
 import { useFavorite } from "@/features/layout/providers/FavoriteProvider";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -7,15 +8,45 @@ import { Box, Button, IconButton } from "@mui/material";
 
 export default function ProductDetailActionButtons({
   productId,
+  title,
+  category,
+  imageUrl,
+  priceYen,
+  color,
+  size,
+  quantity,
 }: {
   productId: string;
+  title: string;
+  category?: string;
+  imageUrl: string;
+  priceYen: number;
+  color: string;
+  size: string;
+  quantity: number;
 }) {
   const { addFavorite, hasFavorite } = useFavorite();
+  const { addCart } = useCart();
   const isFavorite = hasFavorite(productId);
 
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-      <Button size="large" variant="contained">
+      <Button
+        size="large"
+        variant="contained"
+        onClick={() =>
+          addCart({
+            productId,
+            title,
+            category,
+            imageUrl,
+            priceYen,
+            color: color || undefined,
+            size: size || undefined,
+            quantity,
+          })
+        }
+      >
         <ShoppingCartIcon />
         カートへ入れる
       </Button>

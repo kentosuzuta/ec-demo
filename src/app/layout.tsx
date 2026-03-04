@@ -1,5 +1,6 @@
 import Footer from "@/features/layout/components/Footer";
 import { Header } from "@/features/layout/components/Header";
+import { CartProvider } from "@/features/layout/providers/CartProvider";
 import { FavoriteProvider } from "@/features/layout/providers/FavoriteProvider";
 import MuiProvider from "@/providers/ThemeProvider";
 import { Box } from "@mui/material";
@@ -27,11 +28,13 @@ export default function RootLayout({
       >
         <MuiProvider>
           <FavoriteProvider>
-            <Header />
-            <Box component="main" sx={{ flexGrow: 1 }}>
-              {children}
-            </Box>
-            <Footer />
+            <CartProvider>
+              <Header />
+              <Box component="main" sx={{ flexGrow: 1 }}>
+                {children}
+              </Box>
+              <Footer />
+            </CartProvider>
           </FavoriteProvider>
         </MuiProvider>
       </body>

@@ -1,7 +1,10 @@
 "use client";
 
+import { useCart } from "@/features/layout/providers/CartProvider";
 import { useRemoveFavoriteConfirmDialogHandler } from "@/features/favorites/hooks/useRemoveFavoriteConfirmDialogHandler";
 import { useFavorite } from "@/features/layout/providers/FavoriteProvider";
+import AddToCartDialog from "@/features/product/components/AddToCartDialog";
+import { useAddToCartDialogHandler } from "@/features/product/hooks/useAddToCartDialogHandler";
 import type { Product } from "@/features/product/types/product";
 import { formatYen } from "@/lib/format/currency";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -20,15 +23,40 @@ import RemoveFavoriteConfirmDialog from "./RemoveFavoriteConfirmDialog";
 
 export default function FavoriteProductCard({ product }: { product: Product }) {
   const { removeFavorite, hasFavorite } = useFavorite();
+  const { addCart } = useCart();
   const isFavorite = hasFavorite(product.id);
   const {
-    isDialogOpen,
-    handleOpenDialog,
-    handleCloseDialog,
+    isDialogOpen: isRemoveDialogOpen,
+    handleOpenDialog: handleOpenRemoveDialog,
+    handleCloseDialog: handleCloseRemoveDialog,
     handleConfirmRemove,
   } = useRemoveFavoriteConfirmDialogHandler({
     isFavorite,
     onConfirmRemove: () => removeFavorite(product.id),
+  });
+  const {
+    isDialogOpen: isAddToCartDialogOpen,
+    isLoading,
+    colorOptions,
+    sizeOptions,
+    quantityOptions,
+    selectedColor,
+    selectedSize,
+    selectedQuantity,
+    canSubmit,
+    handleOpenDialog: handleOpenAddToCartDialog,
+    handleCloseDialog: handleCloseAddToCartDialog,
+    handleColorChange,
+    handleSizeChange,
+    handleQuantityChange,
+    handleConfirmAddToCart,
+  } = useAddToCartDialogHandler({
+    productId: product.id,
+    title: product.title,
+    category: product.category,
+    imageUrl: product.imageUrl,
+    priceYen: product.priceYen,
+    onConfirmAddToCart: addCart,
   });
 
   return (
@@ -102,7 +130,7 @@ export default function FavoriteProductCard({ product }: { product: Product }) {
               color: isFavorite ? "error.main" : "primary",
               borderColor: isFavorite ? "error.main" : undefined,
             }}
-            onClick={handleOpenDialog}
+            onClick={handleOpenRemoveDialog}
           >
             お気に入りを削除
           </Button>
@@ -111,6 +139,7 @@ export default function FavoriteProductCard({ product }: { product: Product }) {
             disabled={!product.inStock}
             startIcon={<ShoppingCartIcon />}
             sx={{ flex: 1, minWidth: 0, whiteSpace: "nowrap" }}
+            onClick={handleOpenAddToCartDialog}
           >
             カートに追加
           </Button>
@@ -118,10 +147,28 @@ export default function FavoriteProductCard({ product }: { product: Product }) {
       </Card>
 
       <RemoveFavoriteConfirmDialog
-        open={isDialogOpen}
+        open={isRemoveDialogOpen}
         productTitle={product.title}
-        onClose={handleCloseDialog}
+        onClose={handleCloseRemoveDialog}
         onConfirm={handleConfirmRemove}
+      />
+
+      <AddToCartDialog
+        open={isAddToCartDialogOpen}
+        productTitle={product.title}
+        isLoading={isLoading}
+        colorOptions={colorOptions}
+        sizeOptions={sizeOptions}
+        quantityOptions={quantityOptions}
+        selectedColor={selectedColor}
+        selectedSize={selectedSize}
+        selectedQuantity={selectedQuantity}
+        canSubmit={canSubmit}
+        onClose={handleCloseAddToCartDialog}
+        onColorChange={handleColorChange}
+        onSizeChange={handleSizeChange}
+        onQuantityChange={handleQuantityChange}
+        onConfirm={handleConfirmAddToCart}
       />
     </>
   );

@@ -1,6 +1,9 @@
 "use client";
 
+import { useCart } from "@/features/layout/providers/CartProvider";
 import { useFavorite } from "@/features/layout/providers/FavoriteProvider";
+import AddToCartDialog from "@/features/product/components/AddToCartDialog";
+import { useAddToCartDialogHandler } from "@/features/product/hooks/useAddToCartDialogHandler";
 import type { Product } from "@/features/product/types/product";
 import { formatYen } from "@/lib/format/currency";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -18,93 +21,139 @@ import Link from "next/link";
 
 export default function ProductCard({ product }: { product: Product }) {
   const { addFavorite, hasFavorite } = useFavorite();
+  const { addCart } = useCart();
   const isFavorite = hasFavorite(product.id);
+  const {
+    isDialogOpen,
+    isLoading,
+    colorOptions,
+    sizeOptions,
+    quantityOptions,
+    selectedColor,
+    selectedSize,
+    selectedQuantity,
+    canSubmit,
+    handleOpenDialog,
+    handleCloseDialog,
+    handleColorChange,
+    handleSizeChange,
+    handleQuantityChange,
+    handleConfirmAddToCart,
+  } = useAddToCartDialogHandler({
+    productId: product.id,
+    title: product.title,
+    category: product.category,
+    imageUrl: product.imageUrl,
+    priceYen: product.priceYen,
+    onConfirmAddToCart: addCart,
+  });
 
   return (
-    <Card
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        transition: "transform 0.3s",
-        "&:hover": { transform: "scale(1.05)" },
-      }}
-    >
-      <CardActionArea
-        component={Link}
-        href={`/products/${product.id}`}
+    <>
+      <Card
         sx={{
+          height: "100%",
           display: "flex",
           flexDirection: "column",
-          alignItems: "stretch",
-          flexGrow: 1,
+          transition: "transform 0.3s",
+          "&:hover": { transform: "scale(1.05)" },
         }}
       >
-        <CardMedia
-          component="img"
-          image={product.imageUrl}
-          alt={product.title}
-          sx={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover" }}
-        />
-        <CardContent
-          sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+        <CardActionArea
+          component={Link}
+          href={`/products/${product.id}`}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "stretch",
+            flexGrow: 1,
+          }}
         >
-          <Typography variant="h6" component="h2">
-            {product.title}
-          </Typography>
+          <CardMedia
+            component="img"
+            image={product.imageUrl}
+            alt={product.title}
+            sx={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover" }}
+          />
+          <CardContent
+            sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+          >
+            <Typography variant="h6" component="h2">
+              {product.title}
+            </Typography>
 
-          <Typography
-            variant="body2"
+            <Typography
+              variant="body2"
+              sx={{
+                mt: 1,
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
+              {product.summary}
+            </Typography>
+
+            <Typography variant="h6" sx={{ mt: 2 }}>
+              {formatYen(product.priceYen)}
+            </Typography>
+
+            {!product.inStock && (
+              <Typography variant="caption" sx={{ display: "block", mt: 1 }}>
+                在庫なし
+              </Typography>
+            )}
+          </CardContent>
+        </CardActionArea>
+
+        <Box sx={{ px: 2, pb: 2, display: "flex", gap: 1.5 }}>
+          <Button
+            variant="outlined"
+            disabled={!product.inStock}
+            startIcon={<FavoriteBorderIcon />}
             sx={{
-              mt: 1,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
+              flex: 1,
+              minWidth: 0,
+              whiteSpace: "nowrap",
+              color: isFavorite ? "error.main" : "primary",
+              borderColor: isFavorite ? "error.main" : undefined,
+            }}
+            onClick={() => {
+              if (!isFavorite) addFavorite(product.id);
             }}
           >
-            {product.summary}
-          </Typography>
+            {isFavorite ? "お気に入り済み" : "お気に入り"}
+          </Button>
+          <Button
+            variant="contained"
+            disabled={!product.inStock}
+            startIcon={<ShoppingCartIcon />}
+            sx={{ flex: 1, minWidth: 0, whiteSpace: "nowrap" }}
+            onClick={handleOpenDialog}
+          >
+            カートに追加
+          </Button>
+        </Box>
+      </Card>
 
-          <Typography variant="h6" sx={{ mt: 2 }}>
-            {formatYen(product.priceYen)}
-          </Typography>
-
-          {!product.inStock && (
-            <Typography variant="caption" sx={{ display: "block", mt: 1 }}>
-              在庫なし
-            </Typography>
-          )}
-        </CardContent>
-      </CardActionArea>
-
-      <Box sx={{ px: 2, pb: 2, display: "flex", gap: 1.5 }}>
-        <Button
-          variant="outlined"
-          disabled={!product.inStock}
-          startIcon={<FavoriteBorderIcon />}
-          sx={{
-            flex: 1,
-            minWidth: 0,
-            whiteSpace: "nowrap",
-            color: isFavorite ? "error.main" : "primary",
-            borderColor: isFavorite ? "error.main" : undefined,
-          }}
-          onClick={() => {
-            if (!isFavorite) addFavorite(product.id);
-          }}
-        >
-          {isFavorite ? "お気に入り済み" : "お気に入り"}
-        </Button>
-        <Button
-          variant="contained"
-          disabled={!product.inStock}
-          startIcon={<ShoppingCartIcon />}
-          sx={{ flex: 1, minWidth: 0, whiteSpace: "nowrap" }}
-        >
-          カートに追加
-        </Button>
-      </Box>
-    </Card>
+      <AddToCartDialog
+        open={isDialogOpen}
+        productTitle={product.title}
+        isLoading={isLoading}
+        colorOptions={colorOptions}
+        sizeOptions={sizeOptions}
+        quantityOptions={quantityOptions}
+        selectedColor={selectedColor}
+        selectedSize={selectedSize}
+        selectedQuantity={selectedQuantity}
+        canSubmit={canSubmit}
+        onClose={handleCloseDialog}
+        onColorChange={handleColorChange}
+        onSizeChange={handleSizeChange}
+        onQuantityChange={handleQuantityChange}
+        onConfirm={handleConfirmAddToCart}
+      />
+    </>
   );
 }
