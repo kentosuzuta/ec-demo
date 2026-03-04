@@ -8,7 +8,7 @@ export default function ProductDeliveryInfo() {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <LocalShipping color="action" />
           <Typography variant="body2">
-            送料無料（¥5,000以上のご注文）
+            送料無料（¥6,000以上のご注文）
           </Typography>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
