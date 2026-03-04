@@ -1,7 +1,10 @@
+"use client";
+
 import BackToProductsButton from "@/features/common/components/BackToProductsButton";
 import ProductDetailInfoPanel from "@/features/product/components/ProductDetailInfoPanel";
 import ProductImageGallery from "@/features/product/components/ProductImageGallery";
 import ProductVariantSelector from "@/features/product/components/ProductVariantSelector";
+import { useProductVariantSelectorHandler } from "@/features/product/hooks/useProductVariantSelectorHandler";
 import type { Product } from "@/features/product/types/product";
 import { Box, Container } from "@mui/material";
 import ProductDeliveryInfo from "./ProductDeliveryInfo";
@@ -18,6 +21,17 @@ export default function ProductDetailView({
   colorOptions: string[];
   sizeOptions: string[];
 }) {
+  const {
+    normalizedColorOptions,
+    quantityOptions,
+    color,
+    setColor,
+    size,
+    setSize,
+    quantity,
+    setQuantity,
+  } = useProductVariantSelectorHandler(colorOptions, sizeOptions);
+
   return (
     <Container sx={{ py: 4 }}>
       <Box sx={{ mb: 3 }}>
@@ -51,15 +65,31 @@ export default function ProductDetailView({
 
           <Box sx={{ mb: 4 }}>
             <ProductVariantSelector
-              colorOptions={colorOptions}
+              normalizedColorOptions={normalizedColorOptions}
+              quantityOptions={quantityOptions}
               sizeOptions={sizeOptions}
+              color={color}
+              size={size}
+              quantity={quantity}
+              onColorChange={setColor}
+              onSizeChange={setSize}
+              onQuantityChange={setQuantity}
             />
           </Box>
           <Box sx={{ mb: 3 }}>
             <ProductDeliveryInfo />
           </Box>
 
-          <ProductDetailActionButtons productId={product.id} />
+          <ProductDetailActionButtons
+            productId={product.id}
+            title={product.title}
+            category={product.category}
+            imageUrl={product.imageUrl}
+            priceYen={product.priceYen}
+            color={color}
+            size={size}
+            quantity={quantity}
+          />
         </Box>
       </Box>
     </Container>
