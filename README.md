@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EC Demo
 
-## Getting Started
+Next.js + TypeScript + MUI + Supabase で実装した EC サイトのデモです。  
+商品一覧からカート投入、配送先入力、支払い方法選択、注文確定、完了画面までの購入フローを実装しています。
 
-First, run the development server:
+## 公開URL
+
+- Production: `https://<your-vercel-domain>.vercel.app`
+
+## 主な機能
+
+- 商品一覧表示（カテゴリ/検索）
+- 商品詳細表示（カラー・サイズ・数量選択）
+- お気に入り追加/削除
+- カート追加/削除/数量変更
+- ヘッダー通知バッジ（お気に入り・カート）
+- 共通 Snackbar 通知（カート追加時）
+- チェックアウト 3 ステップ
+- 配送先フォームバリデーション
+- 支払い方法フォームバリデーション
+- 注文確認画面
+- 注文確定 API（`/api/orders`）で `orders` / `order_items` に保存
+- 成功画面に注文番号表示
+
+## 技術スタック
+
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- MUI
+- Supabase (PostgreSQL)
+- ESLint
+
+## ディレクトリ構成
+
+```txt
+src/
+  app/                       # ルーティング・ページ・API Route
+    api/orders/route.ts      # 注文確定 API
+  features/
+    product/                 # 商品一覧/詳細
+    favorites/               # お気に入り
+    cart/                    # カート
+    checkout/                # 配送先/支払い/注文確認
+    success/                 # 注文完了画面
+    layout/                  # Header, Footer, providers
+    common/                  # 共通 UI / hooks / constants
+  lib/                       # API クライアント, 整形ユーティリティ
+```
+
+## セットアップ
+
+1. 依存パッケージをインストール
+
+```bash
+npm install
+```
+
+2. 環境変数を設定（`.env.local`）
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+```
+
+3. 開発サーバー起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. ブラウザで確認
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```txt
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Supabase 側で必要なテーブル
 
-## Learn More
+- `products`
+- `orders`
+- `order_items`
 
-To learn more about Next.js, take a look at the following resources:
+`/api/orders` はサーバー側で `SUPABASE_SERVICE_ROLE_KEY` を使用して insert します。  
+`service_role` キーはクライアントへ公開しないでください（`NEXT_PUBLIC_` を付けない）。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## デプロイ（Vercel）
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. GitHub リポジトリを Vercel に接続
+2. Vercel の Project Settings > Environment Variables に以下を設定
 
-## Deploy on Vercel
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Deploy 実行
+4. デプロイ完了後、上記「公開URL」を実URLに更新
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 実行コマンド
+
+- 開発: `npm run dev`
+- Lint: `npm run lint`
+- Build: `npm run build`
+- Start: `npm run start`
+
+## ポートフォリオ観点のポイント
+
+- 機能ごとの `features` 分割で責務を明確化
+- 表示コンポーネントと状態管理 hooks の分離
+- 再利用可能な共通部品（`CommonSnackbar` など）を整備
+- フロントから直接 DB を更新せず API Route 経由で注文登録
