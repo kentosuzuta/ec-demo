@@ -8,6 +8,8 @@ import {
 } from "@/lib/service/product";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page({
   params,
 }: {

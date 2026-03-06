@@ -1,6 +1,8 @@
 import ProductView from "@/features/product/components/ProductView";
 import { fetchProducts } from "@/lib/service/product";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page({
   searchParams,
 }: {

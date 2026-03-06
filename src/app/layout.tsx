@@ -5,6 +5,7 @@ import { FavoriteProvider } from "@/features/layout/providers/FavoriteProvider";
 import MuiProvider from "@/providers/ThemeProvider";
 import { Box } from "@mui/material";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "EC Demo",
@@ -29,7 +30,9 @@ export default function RootLayout({
         <MuiProvider>
           <FavoriteProvider>
             <CartProvider>
-              <Header />
+              <Suspense fallback={null}>
+                <Header />
+              </Suspense>
               <Box component="main" sx={{ flexGrow: 1 }}>
                 {children}
               </Box>
