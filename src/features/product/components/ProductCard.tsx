@@ -1,5 +1,8 @@
 "use client";
 
+import CommonSnackbar from "@/features/common/components/CommonSnackbar";
+import { SNACKBAR_MESSAGES } from "@/features/common/constants/snackbarMessages";
+import { useCommonSnackbarHandler } from "@/features/common/hooks/useCommonSnackbarHandler";
 import { useCart } from "@/features/layout/providers/CartProvider";
 import { useFavorite } from "@/features/layout/providers/FavoriteProvider";
 import AddToCartDialog from "@/features/product/components/AddToCartDialog";
@@ -22,6 +25,8 @@ import Link from "next/link";
 export default function ProductCard({ product }: { product: Product }) {
   const { addFavorite, hasFavorite } = useFavorite();
   const { addCart } = useCart();
+  const { open, message, handleOpenSnackbar, handleCloseSnackbar } =
+    useCommonSnackbarHandler(SNACKBAR_MESSAGES.CART_ITEM_ADDED);
   const isFavorite = hasFavorite(product.id);
   const {
     isDialogOpen,
@@ -45,7 +50,10 @@ export default function ProductCard({ product }: { product: Product }) {
     category: product.category,
     imageUrl: product.imageUrl,
     priceYen: product.priceYen,
-    onConfirmAddToCart: addCart,
+    onConfirmAddToCart: (input) => {
+      addCart(input);
+      handleOpenSnackbar();
+    },
   });
 
   return (
@@ -153,6 +161,12 @@ export default function ProductCard({ product }: { product: Product }) {
         onSizeChange={handleSizeChange}
         onQuantityChange={handleQuantityChange}
         onConfirm={handleConfirmAddToCart}
+      />
+
+      <CommonSnackbar
+        open={open}
+        message={message}
+        onClose={handleCloseSnackbar}
       />
     </>
   );

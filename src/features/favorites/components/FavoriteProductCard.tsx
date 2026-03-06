@@ -1,7 +1,10 @@
 "use client";
 
-import { useCart } from "@/features/layout/providers/CartProvider";
+import CommonSnackbar from "@/features/common/components/CommonSnackbar";
+import { SNACKBAR_MESSAGES } from "@/features/common/constants/snackbarMessages";
+import { useCommonSnackbarHandler } from "@/features/common/hooks/useCommonSnackbarHandler";
 import { useRemoveFavoriteConfirmDialogHandler } from "@/features/favorites/hooks/useRemoveFavoriteConfirmDialogHandler";
+import { useCart } from "@/features/layout/providers/CartProvider";
 import { useFavorite } from "@/features/layout/providers/FavoriteProvider";
 import AddToCartDialog from "@/features/product/components/AddToCartDialog";
 import { useAddToCartDialogHandler } from "@/features/product/hooks/useAddToCartDialogHandler";
@@ -24,6 +27,8 @@ import RemoveFavoriteConfirmDialog from "./RemoveFavoriteConfirmDialog";
 export default function FavoriteProductCard({ product }: { product: Product }) {
   const { removeFavorite, hasFavorite } = useFavorite();
   const { addCart } = useCart();
+  const { open, message, handleOpenSnackbar, handleCloseSnackbar } =
+    useCommonSnackbarHandler(SNACKBAR_MESSAGES.CART_ITEM_ADDED);
   const isFavorite = hasFavorite(product.id);
   const {
     isDialogOpen: isRemoveDialogOpen,
@@ -56,7 +61,10 @@ export default function FavoriteProductCard({ product }: { product: Product }) {
     category: product.category,
     imageUrl: product.imageUrl,
     priceYen: product.priceYen,
-    onConfirmAddToCart: addCart,
+    onConfirmAddToCart: (input) => {
+      addCart(input);
+      handleOpenSnackbar();
+    },
   });
 
   return (
@@ -169,6 +177,12 @@ export default function FavoriteProductCard({ product }: { product: Product }) {
         onSizeChange={handleSizeChange}
         onQuantityChange={handleQuantityChange}
         onConfirm={handleConfirmAddToCart}
+      />
+
+      <CommonSnackbar
+        open={open}
+        message={message}
+        onClose={handleCloseSnackbar}
       />
     </>
   );

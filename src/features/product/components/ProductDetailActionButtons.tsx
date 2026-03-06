@@ -1,5 +1,8 @@
 "use client";
 
+import CommonSnackbar from "@/features/common/components/CommonSnackbar";
+import { SNACKBAR_MESSAGES } from "@/features/common/constants/snackbarMessages";
+import { useCommonSnackbarHandler } from "@/features/common/hooks/useCommonSnackbarHandler";
 import { useCart } from "@/features/layout/providers/CartProvider";
 import { useFavorite } from "@/features/layout/providers/FavoriteProvider";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -27,43 +30,54 @@ export default function ProductDetailActionButtons({
 }) {
   const { addFavorite, hasFavorite } = useFavorite();
   const { addCart } = useCart();
+  const { open, message, handleOpenSnackbar, handleCloseSnackbar } =
+    useCommonSnackbarHandler(SNACKBAR_MESSAGES.CART_ITEM_ADDED);
   const isFavorite = hasFavorite(productId);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-      <Button
-        size="large"
-        variant="contained"
-        onClick={() =>
-          addCart({
-            productId,
-            title,
-            category,
-            imageUrl,
-            priceYen,
-            color: color || undefined,
-            size: size || undefined,
-            quantity,
-          })
-        }
-      >
-        <ShoppingCartIcon />
-        カートへ入れる
-      </Button>
-      <IconButton
-        aria-label="favorite"
-        sx={{
-          border: "1px solid",
-          borderColor: isFavorite ? "error.main" : "divider",
-          borderRadius: "50%",
-          color: isFavorite ? "error.main" : "inherit",
-        }}
-        onClick={() => {
-          if (!isFavorite) addFavorite(productId);
-        }}
-      >
-        <FavoriteBorderIcon />
-      </IconButton>
-    </Box>
+    <>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Button
+          size="large"
+          variant="contained"
+          onClick={() => {
+            addCart({
+              productId,
+              title,
+              category,
+              imageUrl,
+              priceYen,
+              color: color || undefined,
+              size: size || undefined,
+              quantity,
+            });
+            handleOpenSnackbar();
+          }}
+        >
+          <ShoppingCartIcon />
+          カートへ入れる
+        </Button>
+        <IconButton
+          aria-label="favorite"
+          sx={{
+            border: "1px solid",
+            borderColor: isFavorite ? "error.main" : "divider",
+            borderRadius: "50%",
+            color: isFavorite ? "error.main" : "inherit",
+          }}
+          onClick={() => {
+            if (!isFavorite) addFavorite(productId);
+          }}
+        >
+          <FavoriteBorderIcon />
+        </IconButton>
+      </Box>
+
+      <CommonSnackbar
+        open={open}
+        message={message}
+        onClose={handleCloseSnackbar}
+      />
+    </>
   );
 }

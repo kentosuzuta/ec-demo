@@ -29,6 +29,7 @@ export type CartHandlerProps = {
   items: CartItem[];
   addCart: (input: AddCartInput) => void;
   removeCartItem: (input: { productId: string; color: string; size: string }) => void;
+  clearCart: () => void;
   updateCartQuantity: (input: {
     productId: string;
     color: string;
@@ -102,14 +103,19 @@ export function useCartHandler(): CartHandlerProps {
     [],
   );
 
+  const clearCart = useCallback(() => {
+    setItems([]);
+  }, []);
+
   return useMemo(
     () => ({
       count: items.reduce((sum, item) => sum + item.quantity, 0),
       items,
       addCart,
       removeCartItem,
+      clearCart,
       updateCartQuantity,
     }),
-    [addCart, items, removeCartItem, updateCartQuantity],
+    [addCart, clearCart, items, removeCartItem, updateCartQuantity],
   );
 }
